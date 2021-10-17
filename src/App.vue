@@ -1,27 +1,49 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <p v-for="todo in doneTodos" :key="todo.text">{{ todo.text }}</p>
+  <button @click="checkAllTodos">Finalizar</button>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import { defineComponent } from 'vue'
+
+interface Todo {
+  text: string
+  done: boolean
+}
 
 export default defineComponent({
-  name: "App",
-  components: {
-    HelloWorld,
+  data() {
+    return {
+      todos: [] as Todo[],
+    }
   },
-});
-</script>
+  created() {
+    this.todos = [
+      { text: 'Estudar Typescript', done: true },
+      { text: 'Lavar os pratos', done: false },
+      { text: 'Aprender Nuxt.js', done: true },
+    ]
+  },
+  computed: {
+    doneTodos(): Todo[] {
+      return this.todos.filter((todo) => todo.done)
+    },
+  },
+  methods: {
+    checkAllTodos(): void {
+      this.todos = this.todos.map(({ text }) => {
+        return { text, done: true }
+      })
+    },
+  },
+  watch: {
+    todos(newValue: Todo[]) {
+      const isFinished = !newValue.some(({ done }) => !done)
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+      if (isFinished) {
+        alert('Tarefas concluidas!')
+      }
+    },
+  },
+})
+</script>
